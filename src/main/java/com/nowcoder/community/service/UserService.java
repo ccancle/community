@@ -6,6 +6,7 @@ import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.HostHolder;
 import com.nowcoder.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class UserService implements CommunityConstant {
 
     @Autowired
     private MailClient mailClient;
+
+    @Autowired
+    private HostHolder hostHolder;
 
     @Autowired
     private TemplateEngine templateEngine;
@@ -178,12 +182,97 @@ public class UserService implements CommunityConstant {
         loginTicketMapper.updateStatus(ticket, 1);
     }
 
+    /**
+     * 查询登录凭证
+     * @param ticket
+     * @return
+     */
     public LoginTicket findLoginTicket(String ticket) {
         return loginTicketMapper.selectByTicket(ticket);
     }
 
+    /**
+     * 更新用户头像
+     * @param userId
+     * @param headerUrl
+     * @return
+     */
     public int updateHeader(int userId, String headerUrl) {
         return userMapper.updateHeader(userId, headerUrl);
+    }
+
+    /**
+     * 修改密码
+     * @param oldPassword
+     * @param newPassword
+     * @param repeatPassword
+     * @return
+     */
+    public Map<String, Object> resetPassword(String oldPassword,String newPassword,String repeatPassword) {
+        Map<String,Object> map = new HashMap<>();
+        User user = hostHolder.getUser();
+        String oldMd5 = CommunityUtil.md5(oldPassword + user.getSalt());
+        if (StringUtils.isBlank(oldPassword)||oldMd5.equals(user.getPassword())){
+            map.put("oldPasswordMsg","原始密码错误");
+        }
+        if (newPassword.length()<6){
+            map.put("newPasswordMsg","密码不能小于6位");
+        }
+        if (!newPassword.equals(repeatPassword)){
+            map.put("repeatPasswordMsg","密码不一致");
+        }
+        String newPasswordMd5 = CommunityUtil.md5(newPassword+user.getSalt());
+        userMapper.updatePassword(user.getId(),newPasswordMd5);
+        return map;
+    }
+
+    /**
+     * 忘记密码重置密码
+     * @param email
+     * @param code
+     * @param newPassword
+     * @return
+     */
+    public Map<String, Object> forgetPassword(String email,String code,String newPassword,String sessionCode) {
+        Map<String, Object> map = new HashMap<>();
+        // 空值处理
+        if (StringUtils.isBlank(email)) {
+            map.put("emailMsg", "邮箱不能为空!");
+            return map;
+        }
+        if (StringUtils.isBlank(code)) {
+            map.put("codeMsg", "验证码不能为空!");
+            return map;
+        }
+        if (StringUtils.isBlank(newPassword)) {
+            map.put("passwordMsg", "新的密码不能为空!");
+            return map;
+        }
+        if (newPassword.length() < 6){
+            map.put("passwordMsg", "密码长度不能小于6位数字!");
+            return map;
+        }
+        User user = userMapper.selectByEmail(email);
+        if (user==null){
+            map.put("emailMsg", "邮箱未被注册，请重试!");
+            return map;
+        }
+        if (!sessionCode.equals(code)){
+            map.put("codeMsg", "验证码错误，请重试!");
+            return map;
+        }
+        String Md5password = CommunityUtil.md5(newPassword + user.getSalt());
+        userMapper.updatePassword(user.getId(),Md5password);
+        return map;
+    }
+
+    /**
+     * 通过用户名查询用户
+     * @param username
+     * @return
+     */
+    public User findUserByName(String username){
+        return userMapper.selectByName(username);
     }
 
 }

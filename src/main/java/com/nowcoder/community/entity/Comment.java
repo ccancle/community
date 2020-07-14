@@ -2,6 +2,7 @@ package com.nowcoder.community.entity;
 
 
 import javax.xml.crypto.Data;
+import java.util.Date;
 
 /**
  * @author ：ccancle菜菜
@@ -12,12 +13,21 @@ import javax.xml.crypto.Data;
 public class Comment {
     private int id;
     private int userId;
+    /**评论实体类型（1-评论的是帖子 2-评论的是回帖或者用户）*/
     private int entityType;
+    /**
+     * 评论目标
+     * 如果是帖子 则指的是帖子Id 如果是回帖则指的是评论Id'
+     * */
     private int entityId;
+    /**回复指向的用户Id*/
     private int targetId;
+    /**评论内容*/
     private String content;
+    /**状态 0-正常 1-删除*/
     private int status;
-    private Data createTime;
+    /**创建时间*/
+    private Date createTime;
 
     @Override
     public String toString() {
@@ -89,11 +99,11 @@ public class Comment {
         this.status = status;
     }
 
-    public Data getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Data createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 }

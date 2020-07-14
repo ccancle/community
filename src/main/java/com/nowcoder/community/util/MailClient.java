@@ -36,7 +36,9 @@ public class MailClient {
             MimeMessageHelper helper = new MimeMessageHelper(message);
             helper.setFrom(from);
             helper.setTo(to);
+            //主题
             helper.setSubject(subject);
+            //内容
             helper.setText(content, true);
             mailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {

@@ -13,9 +13,30 @@ import java.util.List;
  */
 @Mapper
 public interface CommentMapper {
+    /**
+     * 根据实体查询 (是帖子的评论还是回帖的评论还是)
+     * @param entityType 实体类型
+     * @param entityId 实体Id
+     * @param offset 分页条件
+     * @param limit 行数限制
+     * @return
+     */
     List<Comment> selectCommentsByEntity(int entityType,int entityId,int offset , int limit);
 
+    /**
+     * 查询数据条目数
+     * @param entityType 实体类型
+     * @param entityId 实体Id
+     * @return
+     */
     int selectCountByEntity(int entityType,int entityId);
+
+    /**
+     * 添加评论
+     * @param comment
+     * @return
+     */
+    int insertComment(Comment comment);
 
 
 }

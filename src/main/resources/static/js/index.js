@@ -5,31 +5,27 @@ $(function(){
 function publish() {
 	$("#publishModal").modal("hide");
 
-	//獲取標題和內容
-	$()
+	//获取标题和内容
 	var title = $("#recipient-name").val();
 	var content = $("#message-text").val();
-//發送異步要求（POST）
+//发送异步请求（POST）
 	$.post(
 		CONTEXT_PATH + "/discuss/add",
 		{"title":title,"content":content},
 		function (data) {
 			data = $.parseJSON(data);
-			//在提示框中顯示返回消息
+			//在提示框中显示返回消息
 			$("#hintBody").text(data.msg);
-			//顯示提示框
+			//显示提示框
 			$("#hintModal").modal("show");
-			//2秒後 自動隱藏提示框
+			//2秒后 自动隐藏提示框
 			setTimeout(function(){
 				$("#hintModal").modal("hide");
-				//刷新頁面
+				//成功后刷新页面
 				if (data.code == 0){
 					window.location.reload();
 				}
 			}, 2000);
 		}
 	);
-
-
-
 }

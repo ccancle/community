@@ -7,13 +7,13 @@ package com.nowcoder.community.entity;
  * @version: TODO
  */
 public class Page {
-//    当前的页码
+    /**当前的页码*/
     private int current = 1;
-//    显示上限：
+    /** 显示上限：*/
     private int limit = 10;
-//    数据总数
+    /**数据总数*/
     private int rows;
-//    查询路径(服用分页连接)
+    /**查询路径(服用分页连接)*/
     private String path;
 
     public int getCurrent() {
@@ -33,7 +33,7 @@ public class Page {
     }
 
     public void setLimit(int limit) {
-        if (limit>=1 && limit<=100){
+        if (limit>=1 && limit <= 100){
             this.limit = limit;
         }
 
@@ -44,7 +44,7 @@ public class Page {
     }
 
     public void setRows(int rows) {
-        if (rows>=0){
+        if (rows >= 0){
             this.rows = rows;
         }
 
@@ -72,9 +72,9 @@ public class Page {
      */
     public int getTotal(){
         if (rows % limit == 0){
-            return rows/limit;
+            return rows / limit;
         }else {
-            return rows/limit+1;
+            return rows / limit + 1;
         }
     }
 
@@ -92,7 +92,7 @@ public class Page {
      * @return
      */
     public int getTo(){
-        int to = current - 2;
+        int to = current + 2;
         int total =  getTotal();
         return to > total ? total : to;
     }

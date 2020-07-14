@@ -13,9 +13,11 @@ public class DiscussPost {
     private int userId;
     private String title;
     private String content;
+    /**类型*/
     private int type;
     private int status;
     private Date createTime;
+    /**帖子回帖数量*/
     private int commentCount;
     private double score;
 

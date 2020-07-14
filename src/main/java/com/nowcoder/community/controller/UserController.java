@@ -2,6 +2,7 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 
 /**
@@ -48,6 +51,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private LikeService likeService;
 
     @Autowired
     private HostHolder hostHolder;
@@ -65,8 +70,9 @@ public class UserController {
             model.addAttribute("error", "您还没有选择图片!");
             return "/site/setting";
         }
-
+        //读取文件名
         String fileName = headerImage.getOriginalFilename();
+        //从最后一个.开始读取文件扩展名
         String suffix = fileName.substring(fileName.lastIndexOf("."));
         if (StringUtils.isBlank(suffix)) {
             model.addAttribute("error", "文件的格式不正确!");
@@ -115,5 +121,45 @@ public class UserController {
             logger.error("读取头像失败: " + e.getMessage());
         }
     }
+
+    /**
+     * 修改密码
+     * @param oldPassword
+     * @param newPassword
+     * @param repeatPassword
+     * @param model
+     * @return
+     */
+    @RequestMapping(path = "/resetPassword",method = RequestMethod.POST)
+    public String resetPassword(String oldPassword,String newPassword,String repeatPassword,Model model){
+        Map<String, Object> map = userService.resetPassword(oldPassword, newPassword,repeatPassword);
+        if (map == null || map.isEmpty()) {
+            model.addAttribute("msg", "密码修改成功！下次登录请使用新的密码");
+            model.addAttribute("target", "/index");
+            return "/site/operate-result";
+        } else {
+            model.addAttribute("oldPasswordMsg", map.get("oldPasswordMsg"));
+            model.addAttribute("newPasswordMsg", map.get("newPasswordMsg"));
+            model.addAttribute("repeatPasswordMsg", map.get("repeatPasswordMsg"));
+            return "/site/setting";
+        }
+    }
+
+    @RequestMapping(path = "/profile/{userId}",method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId,Model model){
+        User user = userService.findUserById(userId);
+        if (user==null){
+            throw new RuntimeException("该用户不存在");
+        }
+        model.addAttribute("user",user);
+        //点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount",likeCount);
+        return "/site/profile";
+
+
+
+    }
+
 
 }

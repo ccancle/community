@@ -2,9 +2,11 @@ package com.nowcoder.community;
 
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.LoginTicketMapper;
+import com.nowcoder.community.dao.MessageMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.LoginTicket;
+import com.nowcoder.community.entity.Message;
 import com.nowcoder.community.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +30,9 @@ import java.util.List;
 @SpringBootTest
 @ContextConfiguration(classes = CommunityApplication.class)
 public class MapperTests {
+
+    @Autowired
+    private MessageMapper messageMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -92,8 +97,8 @@ public class MapperTests {
     @Test
     public void testInsertLoginTicket(){
         LoginTicket loginTicket = new LoginTicket();
-        loginTicket.setUserId(101);
-        loginTicket.setTicket("abc");
+        loginTicket.setUserId(1);
+        loginTicket.setTicket("adjui");
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 * 10*10));
 
@@ -102,18 +107,42 @@ public class MapperTests {
 
     @Test
     public void testSelectLoginTicket(){
-        LoginTicket loginTicket = loginTicketMapper.selectByTicket("abc");
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket("adjui");
         System.out.println(loginTicket);
 
-        LoginTicket loginTicket1 = loginTicketMapper.selectByTicket("hah");
-        System.out.println(loginTicket1);
+//        LoginTicket loginTicket1 = loginTicketMapper.selectByTicket("hah");
+//        System.out.println(loginTicket1);
 
-        loginTicketMapper.updateStatus("abc",1);
-        loginTicket = loginTicketMapper.selectByTicket("abc");
+        loginTicketMapper.updateStatus("adjui",1);
+        loginTicket = loginTicketMapper.selectByTicket("adjui");
         System.out.println(loginTicket);
 
-        loginTicketMapper.updateStatus("hah",0);
-        loginTicket1 = loginTicketMapper.selectByTicket("hah");
-        System.out.println(loginTicket1);
+//        loginTicketMapper.updateStatus("hah",0);
+//        loginTicket1 = loginTicketMapper.selectByTicket("hah");
+//        System.out.println(loginTicket1);
+    }
+
+//    私信列表MapperSql测试
+    @Test
+    public void testSelectLetter(){
+        List<Message> list = messageMapper.selectConversations(111,0,20);
+        for (Message message : list) {
+            System.out.println(message);
+        }
+
+        int count = messageMapper.selectConversationCount(111);
+        System.out.println(count);
+
+        List<Message> list1 = messageMapper.selectLetters("111_112",0,10);
+        for (Message message:list1){
+            System.out.println(message);
+        }
+        /**信息数量*/
+        count = messageMapper.selectLetterCount("111_112");
+        System.out.println(count);
+
+        /**未读信息数量*/
+        count = messageMapper.selectLetterUnreadCount(131,"111_131");
+        System.out.println(count);
     }
 }

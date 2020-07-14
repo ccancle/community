@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author ：ccancle菜菜
  * @date ：Created in 2019/12/6 12:45
- * @description：TODO
+ * @description：自定义注解 检查登录状态
  * @version: TODO
  */
 @Target(ElementType.METHOD)

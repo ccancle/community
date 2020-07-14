@@ -185,15 +185,15 @@ public class AlphaController {
     @ResponseBody
     public String getCookie(@CookieValue("code")String code){
         System.out.println(code);
-        return "get cookie";
+        return "get cookie:"+code;
     }
 
-    //Session实例
+    /**Session实例*/
     @RequestMapping(path = "/session/set" ,method = RequestMethod.GET)
     @ResponseBody
     public String setSession(HttpSession session){
         session.setAttribute("id",1);
-        session.setAttribute("name","Test");
+        session.setAttribute("name","Maccha");
         return "set Session";
     }
 
@@ -202,10 +202,10 @@ public class AlphaController {
     public String getSession(HttpSession session){
         System.out.println(session.getAttribute("id"));
         System.out.println(session.getAttribute("name"));
-        return "get Session";
+        return "get Session:ID = "+session.getAttribute("id")+"name = "+session.getAttribute("name");
     }
 
-    //ajax实例
+    /**ajax实例*/
     @RequestMapping(path = "/ajax" ,method = RequestMethod.POST)
     @ResponseBody
     public String textAjax(String name,int age){

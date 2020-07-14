@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+/**
+ * @author ：ccancle菜菜
+ * @date ：Created in 2019/11/28 13:22
+ * @description：MVC配置类 配置拦截器
+ */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 

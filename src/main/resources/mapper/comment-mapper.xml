@@ -7,7 +7,11 @@
         id,user_id,entity_type,entity_id,target_id,content,status,create_time
     </sql>
 
-    <select id="selectCommentsByEntity" resultType="Comment">
+    <sql id="insertFields">
+        user_id,entity_type,entity_id,target_id,content,status,create_time
+    </sql>
+<!--根据评论实体 查询评论-->
+    <select id="selectCommentsByEntity" resultType="com.nowcoder.community.entity.Comment">
         select <include refid="selectFields"></include>
         from comment
         where status=0
@@ -17,13 +21,20 @@
         limit #{offset},#{limit}
     </select>
 
-
+<!--    查询共有多少条数据-->
     <select id="selectCountByEntity" resultType="int">
-        select <include refid="selectFields"></include>
+        select count(id)
         from comment
         where status=0
         and entity_type =#{entityType}
         and entity_id = #{entityId}
     </select>
+
+    <!--    添加评论-->
+    <insert id="insertComment"   parameterType="com.nowcoder.community.entity.Comment">
+        insert  into comment (<include refid="insertFields"></include>)
+        values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime})
+    </insert>
+
 
 </mapper>

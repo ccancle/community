@@ -66,17 +66,27 @@ public class AlphaService {
         return alphaDao.select();
     }
 
-//    前两个用的多点
-    //REQUIRED: 支持当前事务 (外部事务即调用者)，如果外部事务不存在则创建新事务
-    //REQUIRES_NEW：创建一个新的事务 并且暂停当前事务(外部事务)
-    //NESTED：如果当前存在事务（外部事务）则嵌套在该事务中执行（有独立的提交和回滚），如果不存在就会和REQUIRED一样
-    //业务方法A 调用业务方法B  两个事务交叉 以
+    /**
+     isolation事务隔离级别
+     propagation事务传播机制
+        REQUIRED(0),***
+        SUPPORTS(1),
+        MANDATORY(2),
+        REQUIRES_NEW(3),***
+        NOT_SUPPORTED(4),
+        NEVER(5),
+        NESTED(6);***
+     前两个用的多点
+     //REQUIRED: 支持当前事务 (外部事务即调用者)，如果外部事务不存在则创建新事务
+     //REQUIRES_NEW：创建一个新的事务 并且暂停当前事务(外部事务)
+     //NESTED：如果当前存在事务（外部事务）则嵌套在该事务中执行（有独立的提交和回滚），如果不存在就会和REQUIRED一样
+     //业务方法A 调用业务方法B  两个事务交叉 以
+   */
     @Transactional(isolation = Isolation.READ_COMMITTED , propagation = Propagation.REQUIRED)
     public Object savel(){
         //新增用户
         User user = new User();
         user.setUsername("alpha");
-
         user.setSalt(CommunityUtil.generateUUID().substring(0,5));
         user.setPassword(CommunityUtil.md5("123")+user.getSalt());
         user.setEmail("alpha@qq.com");
@@ -87,7 +97,7 @@ public class AlphaService {
         //新增帖子
         DiscussPost discussPost = new DiscussPost();
         discussPost.setUserId(user.getId());
-        discussPost.setTitle("hello");
+        discussPost.setTitle("Hello！");
         discussPost.setContent("新人报道！！");
         discussPost.setCreateTime(new Date());
         discussPostMapper.insertDiscussPost(discussPost);
@@ -98,16 +108,22 @@ public class AlphaService {
         return "OK";
     }
 
+    /**
+     * 编程式事务
+     * @return
+     */
     public Object save2(){
-        transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);//
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);//传播机制
+        //隔离级别
+        transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+        //传播机制
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
 
         return transactionTemplate.execute(new TransactionCallback<Object>() {
             @Override
             public Object doInTransaction(TransactionStatus transactionStatus) {
                 User user = new User();
                 user.setUsername("beta");
-
                 user.setSalt(CommunityUtil.generateUUID().substring(0,5));
                 user.setPassword(CommunityUtil.md5("123")+user.getSalt());
                 user.setEmail("beta@qq.com");
@@ -119,7 +135,7 @@ public class AlphaService {
                 DiscussPost discussPost = new DiscussPost();
                 discussPost.setUserId(user.getId());
                 discussPost.setTitle("你好");
-                discussPost.setContent("我失信人！！！！");
+                discussPost.setContent("我是新人！！！！");
                 discussPost.setCreateTime(new Date());
                 discussPostMapper.insertDiscussPost(discussPost);
 

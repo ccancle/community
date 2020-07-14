@@ -1,12 +1,9 @@
 package com.nowcoder.community.util;
-
-
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import sun.text.normalizer.Trie;
 
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
@@ -20,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * @author ：ccancle菜菜
  * @date ：Created in 2019/12/6 12:48
- * @description：TODO
+ * @description：敏感词过滤 过滤器类
  * @version: TODO
  */
 
@@ -29,12 +26,15 @@ public class SensitiveFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(SensitiveFilter.class);
 
-    //替换符
+    /**替换符*/
     private static final String REPLACEMENT = "***";
 
-    //根节点
+    /**根节点*/
     private TrieNode rootNode = new TrieNode();
 
+    /**
+     * 类的初始化方法 当容器实例化bean的时候方法被调用
+     */
     @PostConstruct
     public void init(){
         try(
@@ -52,7 +52,7 @@ public class SensitiveFilter {
 
     }
 
-    //讲一个敏感词添加到前缀树中
+    /**将一个敏感词添加到前缀树中*/
     private void addKeyword(String keyword){
         TrieNode tempNode = rootNode;
         for (int i = 0; i < keyword.length() ; i++) {
@@ -60,6 +60,7 @@ public class SensitiveFilter {
             TrieNode subNode = tempNode.getSubNode(c);
 
             if (subNode == null){
+                //初始化子节点
                 subNode = new TrieNode();
                 tempNode.addSubNode(c,subNode);
             }
@@ -69,7 +70,7 @@ public class SensitiveFilter {
 
             //设置结束标识
             if (i==keyword.length() - 1){
-                tempNode.setKetwordEnd(true);
+                tempNode.setKeywordEnd(true);
             }
         }
     }
@@ -96,11 +97,12 @@ public class SensitiveFilter {
 
             //跳过符号
             if (isSymbol(c)){
-                //若指针处于根节点
+                //若指针1 处于根节点,將此符号计入字符，让指针2向下走一步
                 if (tempNode ==rootNode){
                     stringBuilder.append(c);
                     begin++;
                 }
+                //无论符号在开头还是中间 指针3一定会向下走一步。
                 position++;
                 continue;
             }
@@ -132,14 +134,18 @@ public class SensitiveFilter {
         return stringBuilder.toString();
     }
 
-    //判断是否为符号
+    /**
+     * 判断是否为符号
+     * */
     private boolean isSymbol(Character c){
         //c<0x2E80 || c > 0x9FFF 是东亚文字范围
-        return Pattern.matches("[^0-9a-zA-Z\u4e00-\u9fa5]", ""+c);
+        return !CharUtils.isAsciiAlphanumeric(c) && (c < 0x2E80 || c > 0x9FFF);
     }
 
 
-    //前缀树
+    /**
+     * 前缀树
+     */
     private class TrieNode{
 //        关键词结束标识
         private boolean isKeywordEnd = false;
@@ -147,10 +153,10 @@ public class SensitiveFilter {
         //子节点(key是下级字符,value是下级节点)
         private Map<Character, TrieNode> subNodes = new HashMap<>();
 
-        public boolean isKetwordEnd(){
+        public boolean isKeywordEnd(){
             return isKeywordEnd;
         }
-        public void setKetwordEnd(boolean keywordEnd){
+        public void setKeywordEnd(boolean keywordEnd){
             isKeywordEnd = keywordEnd;
         }
 

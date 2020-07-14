@@ -11,20 +11,43 @@ import java.util.UUID;
 /**
  * @author ：ccancle菜菜
  * @date ：Created in 2019/11/23 17:35
- * @description：TODO
+ * @description：工具类
  * @version: TODO
  */
 
 public class CommunityUtil {
 
-    // 生成随机字符串
+    /**
+     * 生成UUID随机字符串
+     * */
     public static String generateUUID() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    // MD5加密
-    // hello -> abc123def456
-    // hello + 3e4a8 -> abc123def456abc
+    /**
+     * 生成验证码
+     * @param length
+     * @return
+     */
+    public static String getCode(int length){
+        String code = "";
+        for(int i=0;i<length;i++){
+            boolean boo = (int)(Math.random()*2)==0;
+            if(boo){
+                code += String.valueOf((int)(Math.random()*10));
+            }else {
+                int temp = (int)(Math.random()*2)==0?65:97;
+                char ch = (char)(Math.random()*26+temp);
+                code += String.valueOf(ch);
+            }
+        }
+        return code;
+    }
+    /**
+     * MD5加密
+        hello -> abc123def456
+        hello + 3e4a8 -> abc123def456abc
+     */
     public static String md5(String key) {
         if (StringUtils.isBlank(key)) {
             return null;
