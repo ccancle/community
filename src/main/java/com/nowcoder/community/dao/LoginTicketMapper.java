@@ -7,11 +7,12 @@ import org.springframework.stereotype.Repository;
 /**
  * @author ：ccancle菜菜
  * @date ：Created in 2019/11/25 17:16
- * @description：TODO
+ * @description：登录凭证mysql存储 后更改优化为redis存储 不需要用了
  * @version: TODO
  */
 @Mapper
 @Repository
+@Deprecated
 public interface LoginTicketMapper {
 
     /**

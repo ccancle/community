@@ -27,6 +27,13 @@ public class LikeController {
     @Autowired
     private HostHolder hostHolder;
 
+    /**
+     * 点赞
+     * @param entityType
+     * @param entityId
+     * @param entityUserId
+     * @return
+     */
     @RequestMapping(path = "/like",method = RequestMethod.POST)
     @ResponseBody
     public String like(int entityType,int entityId,int entityUserId){

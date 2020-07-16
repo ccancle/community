@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 
 /**
  * @program: community
- * @description:
+ * @description:统一异常处理
  * @author: Macchac
  * @create: 2020-07-11 19:18
  **/
