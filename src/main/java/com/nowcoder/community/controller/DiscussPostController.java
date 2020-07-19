@@ -1,10 +1,8 @@
 package com.nowcoder.community.controller;
 
-import com.nowcoder.community.dao.CommentMapper;
-import com.nowcoder.community.entity.Comment;
-import com.nowcoder.community.entity.DiscussPost;
-import com.nowcoder.community.entity.Page;
-import com.nowcoder.community.entity.User;
+
+import com.nowcoder.community.entity.*;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.LikeService;
@@ -36,6 +34,8 @@ public class DiscussPostController implements CommunityConstant {
 
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private EventProducer eventProducer;
 
     @Autowired
     private UserService userService;
@@ -63,6 +63,16 @@ public class DiscussPostController implements CommunityConstant {
         post.setContent(content);
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
+
+        //触发发帖事件 新发布的帖子 存储到ES服务器中
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        //触发事件
+        eventProducer.fireEvent(event);
+
 
         //报错情况统一处理  默认成功
         return CommunityUtil.getJSONString(0,"发布成功!");

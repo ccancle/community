@@ -50,13 +50,10 @@ public class LoginController implements CommunityConstant {
     private UserService userService;
     @Autowired
     private RedisTemplate redisTemplate;
-
     @Autowired
     private Producer kaptchaProducer;
-
     @Autowired
     private MailClient mailClient;
-
     @Autowired
     private TemplateEngine templateEngine;
 
