@@ -36,7 +36,9 @@ public class FollowService implements CommunityConstant {
         redisTemplate.execute(new SessionCallback() {
             @Override
             public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                // XXX关注了 XXX实体（帖子或者人）
                 String followeeKey = RedisKeyUtil.getFolloweeKey(userId,entityType);
+                // XXX 的关注者 是XXX
                 String followerKey = RedisKeyUtil.getFollowerKey(entityType,entityId);
 
                 redisOperations.multi();

@@ -40,10 +40,18 @@ public class ElasticsearchService {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
+    /**
+     * 发帖子
+     * @param post
+     */
     public void saveDiscussPost(DiscussPost post){
         discussPostRepository.save(post);
     }
 
+    /**
+     * 删帖子
+     * @param id
+     */
     public void deleteDiscussPost(int id){
         discussPostRepository.deleteById(id);
     }
