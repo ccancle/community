@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
  * @author: Macchac
  * @create: 2020-07-12 13:50
  **/
-//@Component
-//@Aspect
+@Component
+@Aspect
 public class AlphaAspect {
     /**
      * 定义切点service.*所有的service业务类.*所有的方法(..)所有参数

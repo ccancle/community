@@ -8,7 +8,6 @@ import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.MailClient;
 import com.nowcoder.community.util.RedisKeyUtil;
-import io.lettuce.core.RedisURI;
 import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
@@ -23,11 +22,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.imageio.ImageIO;
-import javax.mail.Session;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,7 +46,7 @@ public class LoginController implements CommunityConstant {
     @Autowired
     private UserService userService;
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private Producer kaptchaProducer;
     @Autowired
@@ -102,6 +99,10 @@ public class LoginController implements CommunityConstant {
         return "/site/operate-result";
     }
 
+    /**
+     * 获取验证码
+     * @param response
+     */
     @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
     public void getKaptcha(HttpServletResponse response) {
         // 生成验证码
@@ -143,7 +144,7 @@ public class LoginController implements CommunityConstant {
         String kaptcha = null;
         if (StringUtils.isNotBlank(kaptchaOwner)){
             String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
-            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+            kaptcha = redisTemplate.opsForValue().get(redisKey);
 
         }
         if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
